@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.List;
 
 public class Ava {
 
@@ -8,22 +9,34 @@ public class Ava {
     public static void main(String[] args) {
         String line;
         Scanner in = new Scanner(System.in);
-        String[] list = new String[MAX_TASKS];
+        Task[] list = new Task[MAX_TASKS];
         int counter = 0;
         greetings();
         do {
             line = in.nextLine();
-            if (!line.equals("list")) {
-                list[counter] = line;
-                counter++;
-                System.out.println(LINE_SEPARATOR);
-                System.out.println("added: " + line);
-                System.out.println(LINE_SEPARATOR);
-            } else {
+            if (line.equals("list")) {
                 System.out.println(LINE_SEPARATOR);
                 for (int i = 0; i < counter; i++) {
                     System.out.println((i + 1) + ": " + list[i]);
                 }
+                System.out.println(LINE_SEPARATOR);
+            } else if (line.startsWith("mark")) {
+                int index = Integer.parseInt(line.substring(line.indexOf(" ") + 1)) - 1;
+                list[index].setDone();
+                System.out.println(LINE_SEPARATOR);
+                System.out.println("Nice! I've marked this task as done:\n  " + list[index]);
+                System.out.println(LINE_SEPARATOR);
+            } else if (line.startsWith("unmark")) {
+                int index = Integer.parseInt(line.substring(line.indexOf(" ") + 1)) - 1;
+                list[index].setNotDone();
+                System.out.println(LINE_SEPARATOR);
+                System.out.println("OK, I've marked this task as not done yet:\n  " + list[index]);
+                System.out.println(LINE_SEPARATOR);
+            } else {
+                list[counter] = new Task(line);
+                counter++;
+                System.out.println(LINE_SEPARATOR);
+                System.out.println("added: " + line);
                 System.out.println(LINE_SEPARATOR);
             }
         } while (!line.equals("bye"));
