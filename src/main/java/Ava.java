@@ -32,26 +32,15 @@ public class Ava {
                 break;
 
             case "todo":
-                addTask(new Todo(line.substring(5)), list, counter);
-                counter++;
+                counter = addTodo(line, list, counter);
                 break;
 
             case "deadline":
-                int byIndex = line.indexOf("/by");
-                String deadline = line.substring(9, byIndex - 1);
-                String by = line.substring(byIndex + 4);
-                addTask(new Deadline(deadline, by), list, counter);
-                counter++;
+                counter = addDeadline(line, list, counter);
                 break;
 
             case "event":
-                int fromIndex = line.indexOf("/from");
-                String event = line.substring(6, fromIndex - 1);
-                int toIndex = line.indexOf("/to");
-                String from = line.substring(fromIndex + 6, toIndex - 1);
-                String to = line.substring(toIndex + 4);
-                addTask(new Event(event, from, to), list, counter);
-                counter++;
+                counter = addEvent(line, list, counter);
                 break;
 
             default:
@@ -62,6 +51,32 @@ public class Ava {
         } while (!line.equals("bye"));
 
         goodbyes();
+    }
+
+    private static int addEvent(String line, Task[] list, int counter) {
+        int fromIndex = line.indexOf("/from");
+        String event = line.substring(6, fromIndex - 1);
+        int toIndex = line.indexOf("/to");
+        String from = line.substring(fromIndex + 6, toIndex - 1);
+        String to = line.substring(toIndex + 4);
+        addTask(new Event(event, from, to), list, counter);
+        counter++;
+        return counter;
+    }
+
+    private static int addDeadline(String line, Task[] list, int counter) {
+        int byIndex = line.indexOf("/by");
+        String deadline = line.substring(9, byIndex - 1);
+        String by = line.substring(byIndex + 4);
+        addTask(new Deadline(deadline, by), list, counter);
+        counter++;
+        return counter;
+    }
+
+    private static int addTodo(String line, Task[] list, int counter) {
+        addTask(new Todo(line.substring(5)), list, counter);
+        counter++;
+        return counter;
     }
 
     private static void printTaskList(Task[] list, int counter) {
