@@ -13,67 +13,94 @@ public class Ava {
         greetings();
 
         do {
-            line = in.nextLine();
-            switch (line.split(" ")[0]) {
-            case "list":
-                printTaskList(list, counter);
-                break;
+            line = in.nextLine().toLowerCase();
+            try {
+                switch (line.split(" ")[0]) {
+                case "list":
+                    printTaskList(list, counter);
+                    break;
 
-            case "mark":
-                handleMark(line, list, counter);
-                break;
+                case "mark":
+                    handleMark(line, list, counter);
+                    break;
 
-            case "unmark":
-                handleUnmark(line, list, counter);
-                break;
+                case "unmark":
+                    handleUnmark(line, list, counter);
+                    break;
 
-            case "bye":
-                // Exit condition: just exit the loop
-                break;
+                case "bye":
+                    // Exit condition: just exit the loop
+                    break;
 
-            case "todo":
-                counter = addTodo(line, list, counter);
-                break;
+                case "todo":
+                    counter = addTodo(line, list, counter);
+                    break;
 
-            case "deadline":
-                counter = addDeadline(line, list, counter);
-                break;
+                case "deadline":
+                    counter = addDeadline(line, list, counter);
+                    break;
 
-            case "event":
-                counter = addEvent(line, list, counter);
-                break;
+                case "event":
+                    counter = addEvent(line, list, counter);
+                    break;
 
-            default:
-                addTask(new Task(line), list, counter);
-                counter++;
-                break;
+                default:
+                    throw new InvalidInputException("Invalid Input: Please try again with one of the valid commands:\nlist, todo, deadline, event, mark, unmark");
+                }
             }
+            catch (InvalidInputException | InvalidTodoException | InvalidDeadlineException | InvalidEventException e) {
+                System.out.println(e.getMessage());
+            }
+
         } while (!line.equals("bye"));
 
         goodbyes();
     }
 
-    private static int addEvent(String line, Task[] list, int counter) {
+    private static int addEvent(String line, Task[] list, int counter) throws InvalidEventException {
         int fromIndex = line.indexOf("/from");
+        if (fromIndex == -1) {
+            throw new InvalidEventException("Please use format: event [description] /from [when] /to [when]");
+        }
         String event = line.substring(6, fromIndex - 1);
         int toIndex = line.indexOf("/to");
+        if (toIndex == -1) {
+            throw new InvalidEventException("Please use format: event [description] /from [when] /to [when]");
+        }
         String from = line.substring(fromIndex + 6, toIndex - 1);
         String to = line.substring(toIndex + 4);
+
+        if (event.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            throw new InvalidEventException("Please use format: event [description] /from [when] /to [when]");
+        }
+
         addTask(new Event(event, from, to), list, counter);
         counter++;
         return counter;
     }
 
-    private static int addDeadline(String line, Task[] list, int counter) {
+    private static int addDeadline(String line, Task[] list, int counter) throws InvalidDeadlineException {
         int byIndex = line.indexOf("/by");
+
+        if (byIndex == -1) {
+            throw new InvalidDeadlineException("Please use format: deadline [description] /by [when]");
+        }
+
         String deadline = line.substring(9, byIndex - 1);
         String by = line.substring(byIndex + 4);
+
+        if (deadline.isEmpty() || by.isEmpty()) {
+            throw new InvalidDeadlineException("Please use format: deadline [description] /by [when]");
+        }
         addTask(new Deadline(deadline, by), list, counter);
         counter++;
         return counter;
     }
 
-    private static int addTodo(String line, Task[] list, int counter) {
+    private static int addTodo(String line, Task[] list, int counter) throws InvalidTodoException {
+        if (line.substring(5).isEmpty()) {
+            throw new InvalidTodoException("The description of Todo cannot be empty");
+        }
         addTask(new Todo(line.substring(5)), list, counter);
         counter++;
         return counter;

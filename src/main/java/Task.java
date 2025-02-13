@@ -23,6 +23,13 @@ public class Task {
         return (isDone ? "X" : " "); // mark done task with X
     }
 
+    public boolean equals(Object obj) {
+        if (obj instanceof Task t) {
+            return description.equals(t.description);
+        }
+        return false;
+    }
+
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;
     }
