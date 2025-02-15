@@ -114,7 +114,10 @@ public class Ava {
         System.out.println(LINE_SEPARATOR);
     }
 
-    private static void handleMark(String line, Task[] list, int counter) {
+    private static void handleMark(String line, Task[] list, int counter) throws InvalidInputException {
+        if (line.length() == 4) {
+            throw new InvalidInputException("mark/unmark cannot be empty!");
+        }
         String toMark = line.substring(line.indexOf(" ") + 1);
         int index = getTaskIndex(toMark, list, counter);
 
@@ -130,7 +133,10 @@ public class Ava {
         }
     }
 
-    private static void handleUnmark(String line, Task[] list, int counter) {
+    private static void handleUnmark(String line, Task[] list, int counter) throws InvalidInputException {
+        if (line.length() == 4) {
+            throw new InvalidInputException("mark/unmark cannot be empty!");
+        }
         String toMark = line.substring(line.indexOf(" ") + 1);
         int index = getTaskIndex(toMark, list, counter);
 
