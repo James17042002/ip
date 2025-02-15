@@ -60,18 +60,18 @@ public class Ava {
     private static int addEvent(String line, Task[] list, int counter) throws InvalidEventException {
         int fromIndex = line.indexOf("/from");
         if (fromIndex == -1) {
-            throw new InvalidEventException("Please use format: event [description] /from [when] /to [when]");
+            throw new InvalidEventException("Please use format: event [description] /from [start] /to [end]");
         }
-        String event = line.substring(6, fromIndex - 1);
+        String event = line.substring(5, fromIndex - 1).trim();
         int toIndex = line.indexOf("/to");
         if (toIndex == -1) {
-            throw new InvalidEventException("Please use format: event [description] /from [when] /to [when]");
+            throw new InvalidEventException("Please use format: event [description] /from [start] /to [end]");
         }
-        String from = line.substring(fromIndex + 6, toIndex - 1);
-        String to = line.substring(toIndex + 4);
+        String from = line.substring(fromIndex + 5, toIndex - 1).trim();
+        String to = line.substring(toIndex + 3).trim();
 
         if (event.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            throw new InvalidEventException("Please use format: event [description] /from [when] /to [when]");
+            throw new InvalidEventException("Please use format: event [description] /from [start] /to [end]");
         }
 
         addTask(new Event(event, from, to), list, counter);
@@ -86,8 +86,8 @@ public class Ava {
             throw new InvalidDeadlineException("Please use format: deadline [description] /by [when]");
         }
 
-        String deadline = line.substring(9, byIndex - 1);
-        String by = line.substring(byIndex + 4);
+        String deadline = line.substring(8, byIndex - 1).trim();
+        String by = line.substring(byIndex + 3).trim();
 
         if (deadline.isEmpty() || by.isEmpty()) {
             throw new InvalidDeadlineException("Please use format: deadline [description] /by [when]");
@@ -98,7 +98,7 @@ public class Ava {
     }
 
     private static int addTodo(String line, Task[] list, int counter) throws InvalidTodoException {
-        if (line.substring(5).isEmpty()) {
+        if (line.length() == 4) {
             throw new InvalidTodoException("The description of Todo cannot be empty");
         }
         addTask(new Todo(line.substring(5)), list, counter);
@@ -115,10 +115,16 @@ public class Ava {
     }
 
     private static void handleMark(String line, Task[] list, int counter) throws InvalidInputException {
+<<<<<<< HEAD
         if (line.length() == 4) {
             throw new InvalidInputException("mark/unmark cannot be empty!");
         }
+=======
+>>>>>>> branch-Level-5
         String toMark = line.substring(line.indexOf(" ") + 1);
+        if (toMark.isEmpty()) {
+            throw new InvalidInputException("mark/unmark cannot be empty!");
+        }
         int index = getTaskIndex(toMark, list, counter);
 
         if (index == -1) {
