@@ -115,16 +115,10 @@ public class Ava {
     }
 
     private static void handleMark(String line, Task[] list, int counter) throws InvalidInputException {
-<<<<<<< HEAD
         if (line.length() == 4) {
             throw new InvalidInputException("mark/unmark cannot be empty!");
         }
-=======
->>>>>>> branch-Level-5
         String toMark = line.substring(line.indexOf(" ") + 1);
-        if (toMark.isEmpty()) {
-            throw new InvalidInputException("mark/unmark cannot be empty!");
-        }
         int index = getTaskIndex(toMark, list, counter);
 
         if (index == -1) {
