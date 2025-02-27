@@ -11,18 +11,80 @@ import Ava.Tasks.Todo;
 
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Ava {
 
     public static final String LINE_SEPARATOR = "_____________________________";
 
-    public static void main(String[] args) {
+    private static void loadData(ArrayList<Task> list) throws FileNotFoundException {
+        File f = new File("src/main/java/Ava/Data/Ava.txt"); // create a File for the given file path
+        Scanner s = new Scanner(f); // create a Scanner using the File as the source
+        readData(s, list);
+    }
+
+    private static void readData(Scanner in, ArrayList<Task> list) {
         String line;
+        int counter = 0;
+        while (in.hasNextLine()) {
+            line = in.nextLine().toLowerCase();
+            try {
+                switch (line.split(" ")[0]) {
+                case "mark":
+                    handleMark(line, list, counter, false);
+                    break;
+
+                case "todo":
+                    counter = addTodo(line, list, counter, false);
+                    break;
+
+                case "deadline":
+                    counter = addDeadline(line, list, counter, false);
+                    break;
+
+                case "event":
+                    counter = addEvent(line, list, counter, false);
+                    break;
+
+                default:
+                    throw new InvalidInputException("File not formatted correctly!");
+                }
+            }
+            catch (InvalidInputException | InvalidTodoException | InvalidDeadlineException | InvalidEventException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void saveData(ArrayList<Task> list) throws IOException {
+        FileWriter fw = new FileWriter("src/main/java/Ava/Data/Ava.txt");
+        for (Task task : list) {
+            fw.write(task.toDataFormat());
+        }
+        fw.close();
+    }
+
+    public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         ArrayList<Task> list = new ArrayList<>();
-        int counter = 0;
+        try {
+            loadData(list);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        }
+        int counter = list.size();
         greetings();
 
+        parser(in, list, counter);
+
+        goodbyes();
+    }
+
+    private static void parser(Scanner in, ArrayList<Task> list, int counter) {
+        String line;
         do {
             line = in.nextLine().toLowerCase();
             try {
@@ -32,7 +94,7 @@ public class Ava {
                     break;
 
                 case "mark":
-                    handleMark(line, list, counter);
+                    handleMark(line, list, counter, true);
                     break;
 
                 case "unmark":
@@ -44,15 +106,15 @@ public class Ava {
                     break;
 
                 case "todo":
-                    counter = addTodo(line, list, counter);
+                    counter = addTodo(line, list, counter, true);
                     break;
 
                 case "deadline":
-                    counter = addDeadline(line, list, counter);
+                    counter = addDeadline(line, list, counter, true);
                     break;
 
                 case "event":
-                    counter = addEvent(line, list, counter);
+                    counter = addEvent(line, list, counter, true);
                     break;
 
                 case "delete":
@@ -66,10 +128,13 @@ public class Ava {
             catch (InvalidInputException | InvalidTodoException | InvalidDeadlineException | InvalidEventException e) {
                 System.out.println(e.getMessage());
             }
+            try {
+                saveData(list);
+            } catch (IOException e) {
+                System.out.println("Something went wrong: " + e.getMessage());
+            }
 
         } while (!line.equals("bye"));
-
-        goodbyes();
     }
 
     private static int delete(String line, ArrayList<Task> list, int counter) {
@@ -85,7 +150,7 @@ public class Ava {
         return counter;
     }
 
-    private static int addEvent(String line, ArrayList<Task> list, int counter) throws InvalidEventException {
+    private static int addEvent(String line, ArrayList<Task> list, int counter, boolean isPrinted) throws InvalidEventException {
         int fromIndex = line.indexOf("/from");
         if (fromIndex == -1) {
             throw new InvalidEventException("Please use format: event [description] /from [start] /to [end]");
@@ -102,12 +167,12 @@ public class Ava {
             throw new InvalidEventException("Please use format: event [description] /from [start] /to [end]");
         }
 
-        addTask(new Event(event, from, to), list, counter);
+        addTask(new Event(event, from, to), list, counter, isPrinted);
         counter++;
         return counter;
     }
 
-    private static int addDeadline(String line, ArrayList<Task> list, int counter) throws InvalidDeadlineException {
+    private static int addDeadline(String line, ArrayList<Task> list, int counter, boolean isPrinted) throws InvalidDeadlineException {
         int byIndex = line.indexOf("/by");
 
         if (byIndex == -1) {
@@ -120,16 +185,16 @@ public class Ava {
         if (deadline.isEmpty() || by.isEmpty()) {
             throw new InvalidDeadlineException("Please use format: deadline [description] /by [when]");
         }
-        addTask(new Deadline(deadline, by), list, counter);
+        addTask(new Deadline(deadline, by), list, counter, isPrinted);
         counter++;
         return counter;
     }
 
-    private static int addTodo(String line, ArrayList<Task> list, int counter) throws InvalidTodoException {
+    private static int addTodo(String line, ArrayList<Task> list, int counter, boolean isPrinted) throws InvalidTodoException {
         if (line.length() == 4) {
             throw new InvalidTodoException("The description of Todo cannot be empty");
         }
-        addTask(new Todo(line.substring(5)), list, counter);
+        addTask(new Todo(line.substring(5)), list, counter, isPrinted);
         counter++;
         return counter;
     }
@@ -142,22 +207,24 @@ public class Ava {
         System.out.println(LINE_SEPARATOR);
     }
 
-    private static void handleMark(String line, ArrayList<Task> list, int counter) throws InvalidInputException {
+    private static void handleMark(String line, ArrayList<Task> list, int counter, boolean isPrinted) throws InvalidInputException {
         if (line.length() == 4) {
             throw new InvalidInputException("mark/unmark cannot be empty!");
         }
         String toMark = line.substring(line.indexOf(" ") + 1);
         int index = getTaskIndex(toMark, list, counter);
 
-        if (index == -1) {
+        if (index == -1 && isPrinted) {
             System.out.println(LINE_SEPARATOR);
             System.out.println(toMark + " not in list!");
             System.out.println(LINE_SEPARATOR);
         } else {
             list.get(index).setDone();
-            System.out.println(LINE_SEPARATOR);
-            System.out.println("Nice! I've marked this task as done:\n  " + list.get(index));
-            System.out.println(LINE_SEPARATOR);
+            if (isPrinted) {
+                System.out.println(LINE_SEPARATOR);
+                System.out.println("Nice! I've marked this task as done:\n  " + list.get(index));
+                System.out.println(LINE_SEPARATOR);
+            }
         }
     }
 
@@ -195,13 +262,15 @@ public class Ava {
         return index;
     }
 
-    private static void addTask(Task task, ArrayList<Task> list, int counter) {
+    private static void addTask(Task task, ArrayList<Task> list, int counter, boolean isPrinted) {
         list.add(task);
-        System.out.println(LINE_SEPARATOR);
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task.toString());
-        System.out.println("Now you have " + (counter + 1) + " task(s) in the list.");
-        System.out.println(LINE_SEPARATOR);
+        if (isPrinted) {
+            System.out.println(LINE_SEPARATOR);
+            System.out.println("Got it. I've added this task:");
+            System.out.println("  " + task.toString());
+            System.out.println("Now you have " + (counter + 1) + " task(s) in the list.");
+            System.out.println(LINE_SEPARATOR);
+        }
     }
 
     private static void goodbyes() {
