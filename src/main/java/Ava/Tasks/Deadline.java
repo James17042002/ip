@@ -13,4 +13,13 @@ public class Deadline extends Task {
     public String toString() {
         return "[D]" + super.toString() + " (by: " + by + ")";
     }
+
+    @Override
+    public String toDataFormat() {
+        String data =  "deadline " + description + " /by " + by;
+        if (isDone) {
+            data += "\n" + "mark " + description;
+        }
+        return data;
+    }
 }
