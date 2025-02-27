@@ -75,13 +75,14 @@ public class Ava {
     private static int delete(String line, ArrayList<Task> list, int counter) {
         String toDelete = line.substring(6).trim();
         int index = getTaskIndex(toDelete, list, counter);
+        counter--;
         System.out.println(LINE_SEPARATOR);
         System.out.println("Got it. I've removed this task:");
         System.out.println("  " + list.get(index).toString());
-        System.out.println("Now you have " + (counter - 1) + " task(s) in the list.");
+        System.out.println("Now you have " + (counter) + " task(s) in the list.");
         System.out.println(LINE_SEPARATOR);
         list.remove(index);
-        return counter - 1;
+        return counter;
     }
 
     private static int addEvent(String line, ArrayList<Task> list, int counter) throws InvalidEventException {
