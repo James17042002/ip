@@ -1,5 +1,7 @@
+package Ava.Exceptions;
+
 public class InvalidTodoException extends AvaException {
-    InvalidTodoException(String message) {
+    public InvalidTodoException(String message) {
         super(message);
     }
 }
