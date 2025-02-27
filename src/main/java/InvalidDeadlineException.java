@@ -1,7 +1,5 @@
-package Ava.Exceptions;
-
 public class InvalidDeadlineException extends AvaException {
-    public InvalidDeadlineException(String message) {
+    InvalidDeadlineException(String message) {
         super(message);
     }
 }
