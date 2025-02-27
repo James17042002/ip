@@ -1,14 +1,25 @@
+package Ava;
+
+import Ava.Exceptions.InvalidDeadlineException;
+import Ava.Exceptions.InvalidEventException;
+import Ava.Exceptions.InvalidInputException;
+import Ava.Exceptions.InvalidTodoException;
+import Ava.Tasks.Deadline;
+import Ava.Tasks.Event;
+import Ava.Tasks.Task;
+import Ava.Tasks.Todo;
+
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Ava {
 
     public static final String LINE_SEPARATOR = "_____________________________";
-    public static final int MAX_TASKS = 100;
 
     public static void main(String[] args) {
         String line;
         Scanner in = new Scanner(System.in);
-        Task[] list = new Task[MAX_TASKS];
+        ArrayList<Task> list = new ArrayList<>();
         int counter = 0;
         greetings();
 
@@ -44,6 +55,10 @@ public class Ava {
                     counter = addEvent(line, list, counter);
                     break;
 
+                case "delete":
+                    counter = delete(line, list, counter);
+                    break;
+
                 default:
                     throw new InvalidInputException("Invalid Input: Please try again with one of the valid commands:\nlist, todo, deadline, event, mark, unmark");
                 }
@@ -57,7 +72,19 @@ public class Ava {
         goodbyes();
     }
 
-    private static int addEvent(String line, Task[] list, int counter) throws InvalidEventException {
+    private static int delete(String line, ArrayList<Task> list, int counter) {
+        String toDelete = line.substring(6).trim();
+        int index = getTaskIndex(toDelete, list, counter);
+        System.out.println(LINE_SEPARATOR);
+        System.out.println("Got it. I've removed this task:");
+        System.out.println("  " + list.get(index).toString());
+        System.out.println("Now you have " + (counter - 1) + " task(s) in the list.");
+        System.out.println(LINE_SEPARATOR);
+        list.remove(index);
+        return counter - 1;
+    }
+
+    private static int addEvent(String line, ArrayList<Task> list, int counter) throws InvalidEventException {
         int fromIndex = line.indexOf("/from");
         if (fromIndex == -1) {
             throw new InvalidEventException("Please use format: event [description] /from [start] /to [end]");
@@ -79,7 +106,7 @@ public class Ava {
         return counter;
     }
 
-    private static int addDeadline(String line, Task[] list, int counter) throws InvalidDeadlineException {
+    private static int addDeadline(String line, ArrayList<Task> list, int counter) throws InvalidDeadlineException {
         int byIndex = line.indexOf("/by");
 
         if (byIndex == -1) {
@@ -97,7 +124,7 @@ public class Ava {
         return counter;
     }
 
-    private static int addTodo(String line, Task[] list, int counter) throws InvalidTodoException {
+    private static int addTodo(String line, ArrayList<Task> list, int counter) throws InvalidTodoException {
         if (line.length() == 4) {
             throw new InvalidTodoException("The description of Todo cannot be empty");
         }
@@ -106,15 +133,15 @@ public class Ava {
         return counter;
     }
 
-    private static void printTaskList(Task[] list, int counter) {
+    private static void printTaskList(ArrayList<Task> list, int counter) {
         System.out.println(LINE_SEPARATOR);
         for (int i = 0; i < counter; i++) {
-            System.out.println((i + 1) + ": " + list[i].toString());
+            System.out.println((i + 1) + ": " + list.get(i).toString());
         }
         System.out.println(LINE_SEPARATOR);
     }
 
-    private static void handleMark(String line, Task[] list, int counter) throws InvalidInputException {
+    private static void handleMark(String line, ArrayList<Task> list, int counter) throws InvalidInputException {
         if (line.length() == 4) {
             throw new InvalidInputException("mark/unmark cannot be empty!");
         }
@@ -126,14 +153,14 @@ public class Ava {
             System.out.println(toMark + " not in list!");
             System.out.println(LINE_SEPARATOR);
         } else {
-            list[index].setDone();
+            list.get(index).setDone();
             System.out.println(LINE_SEPARATOR);
-            System.out.println("Nice! I've marked this task as done:\n  " + list[index]);
+            System.out.println("Nice! I've marked this task as done:\n  " + list.get(index));
             System.out.println(LINE_SEPARATOR);
         }
     }
 
-    private static void handleUnmark(String line, Task[] list, int counter) throws InvalidInputException {
+    private static void handleUnmark(String line, ArrayList<Task> list, int counter) throws InvalidInputException {
         if (line.length() == 4) {
             throw new InvalidInputException("mark/unmark cannot be empty!");
         }
@@ -145,20 +172,20 @@ public class Ava {
             System.out.println(toMark + " not in list!");
             System.out.println(LINE_SEPARATOR);
         } else {
-            list[index].setNotDone();
+            list.get(index).setNotDone();
             System.out.println(LINE_SEPARATOR);
-            System.out.println("OK, I've marked this task as not done yet:\n  " + list[index]);
+            System.out.println("OK, I've marked this task as not done yet:\n  " + list.get(index));
             System.out.println(LINE_SEPARATOR);
         }
     }
 
-    private static int getTaskIndex(String toMark, Task[] list, int counter) {
+    private static int getTaskIndex(String toMark, ArrayList<Task> list, int counter) {
         int index = -1;
         if (Character.isDigit(toMark.charAt(0))) {
             index = Integer.parseInt(toMark) - 1;
         } else {
             for (int i = 0; i < counter; i++) {
-                if (list[i].isTask(toMark)) {
+                if (list.get(i).isTask(toMark)) {
                     index = i;
                     break;
                 }
@@ -167,8 +194,8 @@ public class Ava {
         return index;
     }
 
-    private static void addTask(Task task, Task[] list, int counter) {
-        list[counter] = task;
+    private static void addTask(Task task, ArrayList<Task> list, int counter) {
+        list.add(task);
         System.out.println(LINE_SEPARATOR);
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task.toString());
