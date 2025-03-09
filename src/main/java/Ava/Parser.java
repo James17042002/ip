@@ -68,6 +68,10 @@ public class Parser {
                     counter = TaskList.delete(line, list, counter);
                     break;
 
+                case "find":
+                    TaskList.findTasksWithKeyword(list, line);
+                    break;
+
                 default:
                     // Throws an exception for invalid commands
                     throw new InvalidInputException("Invalid Input: Please try again with one of the valid commands:\n"

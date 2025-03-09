@@ -11,11 +11,10 @@ import Ava.Tasks.Todo;
 
 import java.util.ArrayList;
 
-import java.util.ArrayList;
-
 /**
  * The `TaskList` class manages the list of tasks and provides operations to add, delete, and modify tasks.
  */
+
 public class TaskList {
 
     /**
@@ -199,5 +198,33 @@ public class TaskList {
         if (isPrinted) {
             UI.showTaskAdded(task, counter);
         }
+    }
+
+    /**
+     * Finds tasks in the list that contain the specified keyword and displays them to the user.
+     *
+     * @param list The list of tasks to search through.
+     * @param line The user input containing the keyword to search for.
+     */
+    static void findTasksWithKeyword(ArrayList<Task> list, String line) {
+        ArrayList<Task> matchingList = new ArrayList<>(); // List to store matching tasks
+        String toFind = line.split(" ")[1]; // Extract the keyword from the user input
+        int matchingCounter = 0; // Counter for the number of matching tasks
+
+        // Iterate through the task list to find tasks containing the keyword
+        for (Task task : list) {
+            if (task.isContains(toFind)) {
+                matchingList.add(task); // Add matching tasks to the list
+                matchingCounter++; // Increment the matching counter
+            }
+        }
+
+        // Display a message if no tasks match the keyword
+        if (matchingCounter == 0) {
+            UI.showTaskNotFound(toFind);
+        }
+
+        // Display the list of matching tasks
+        UI.printTaskList(matchingList, matchingCounter);
     }
 }
