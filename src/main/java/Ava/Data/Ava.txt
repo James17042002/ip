@@ -1,3 +1,4 @@
 todo read book
 event chill /from night /to morning
 deadline eat /by 6pm
+deadline return book /by tmr
