@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static Ava.UI.printTaskList;
+
 public class Parser {
     public static void parser(Scanner in, ArrayList<Task> list, int counter) {
         String line;
@@ -18,7 +20,7 @@ public class Parser {
             try {
                 switch (line.split(" ")[0]) {
                 case "list":
-                    UI.printTaskList(list, counter);
+                    printTaskList(list, counter);
                     break;
 
                 case "mark":
@@ -49,6 +51,10 @@ public class Parser {
                     counter = TaskList.delete(line, list, counter);
                     break;
 
+                case "find":
+                    TaskList.findTasksWithKeyword(list, line);
+                    break;
+
                 default:
                     throw new InvalidInputException("Invalid Input: Please try again with one of the valid commands:\nlist, todo, deadline, event, mark, unmark, delete, bye");
                 }
@@ -64,4 +70,5 @@ public class Parser {
 
         } while (!line.equals("bye"));
     }
+
 }

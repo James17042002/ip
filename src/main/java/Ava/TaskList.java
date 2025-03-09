@@ -11,6 +11,8 @@ import Ava.Tasks.Todo;
 
 import java.util.ArrayList;
 
+import static Ava.UI.printTaskList;
+
 public class TaskList {
     public static int delete(String line, ArrayList<Task> list, int counter) {
         String toDelete = line.substring(6).trim();
@@ -122,5 +124,19 @@ public class TaskList {
         if (isPrinted) {
             UI.showTaskAdded(task, counter);
         }
+    }
+
+    static void findTasksWithKeyword(ArrayList<Task> list, String line) {
+        ArrayList<Task> matchingList = new ArrayList<>();
+        String toFind = line.split(" ")[1];
+        int matchingCounter = 0;
+        for (Task task : list) {
+            if (task.isContains(toFind)) {
+                matchingList.add(task);
+                matchingCounter++;
+            }
+        }
+
+        printTaskList(matchingList, matchingCounter);
     }
 }
