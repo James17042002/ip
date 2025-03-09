@@ -11,7 +11,21 @@ import Ava.Tasks.Todo;
 
 import java.util.ArrayList;
 
+import java.util.ArrayList;
+
+/**
+ * The `TaskList` class manages the list of tasks and provides operations to add, delete, and modify tasks.
+ */
 public class TaskList {
+
+    /**
+     * Deletes a task from the task list based on the user input.
+     *
+     * @param line    The user input containing the task to delete.
+     * @param list    The list of tasks.
+     * @param counter The current number of tasks in the list.
+     * @return The updated number of tasks in the list after deletion.
+     */
     public static int delete(String line, ArrayList<Task> list, int counter) {
         String toDelete = line.substring(6).trim();
         int index = getTaskIndex(toDelete, list, counter);
@@ -21,6 +35,16 @@ public class TaskList {
         return counter;
     }
 
+    /**
+     * Adds a new Event task to the task list.
+     *
+     * @param line      The user input containing the Event details.
+     * @param list      The list of tasks.
+     * @param counter   The current number of tasks in the list.
+     * @param isPrinted Whether to display a confirmation message, since it's used for saving data as well
+     * @return The updated number of tasks in the list after adding the Event.
+     * @throws InvalidEventException If the Event format is invalid.
+     */
     public static int addEvent(String line, ArrayList<Task> list, int counter, boolean isPrinted) throws InvalidEventException {
         int fromIndex = line.indexOf("/from");
         if (fromIndex == -1) {
@@ -43,6 +67,16 @@ public class TaskList {
         return counter;
     }
 
+    /**
+     * Adds a new Deadline task to the task list.
+     *
+     * @param line      The user input containing the Deadline details.
+     * @param list      The list of tasks.
+     * @param counter   The current number of tasks in the list.
+     * @param isPrinted Whether to display a confirmation message.
+     * @return The updated number of tasks in the list after adding the Deadline.
+     * @throws InvalidDeadlineException If the Deadline format is invalid.
+     */
     public static int addDeadline(String line, ArrayList<Task> list, int counter, boolean isPrinted) throws InvalidDeadlineException {
         int byIndex = line.indexOf("/by");
 
@@ -61,6 +95,16 @@ public class TaskList {
         return counter;
     }
 
+    /**
+     * Adds a new Todo task to the task list.
+     *
+     * @param line      The user input containing the Todo details.
+     * @param list      The list of tasks.
+     * @param counter   The current number of tasks in the list.
+     * @param isPrinted Whether to display a confirmation message.
+     * @return The updated number of tasks in the list after adding the Todo.
+     * @throws InvalidTodoException If the Todo description is empty.
+     */
     public static int addTodo(String line, ArrayList<Task> list, int counter, boolean isPrinted) throws InvalidTodoException {
         if (line.length() == 4) {
             throw new InvalidTodoException("The description of Todo cannot be empty");
@@ -70,6 +114,15 @@ public class TaskList {
         return counter;
     }
 
+    /**
+     * Marks a task as done based on the user input.
+     *
+     * @param line      The user input containing the task to mark.
+     * @param list      The list of tasks.
+     * @param counter   The current number of tasks in the list.
+     * @param isPrinted Whether to display a confirmation message.
+     * @throws InvalidInputException If the task to mark is invalid or not found.
+     */
     public static void handleMark(String line, ArrayList<Task> list, int counter, boolean isPrinted) throws InvalidInputException {
         if (line.length() == 4) {
             throw new InvalidInputException("mark/unmark cannot be empty!");
@@ -87,6 +140,14 @@ public class TaskList {
         }
     }
 
+    /**
+     * Marks a task as not done based on the user input.
+     *
+     * @param line    The user input containing the task to unmark.
+     * @param list    The list of tasks.
+     * @param counter The current number of tasks in the list.
+     * @throws InvalidInputException If the task to unmark is invalid or not found.
+     */
     public static void handleUnmark(String line, ArrayList<Task> list, int counter) throws InvalidInputException {
         if (line.length() == 4) {
             throw new InvalidInputException("mark/unmark cannot be empty!");
@@ -102,6 +163,14 @@ public class TaskList {
         }
     }
 
+    /**
+     * Finds the index of a task in the list based on the user input.
+     *
+     * @param toMark  The user input containing the task to find.
+     * @param list    The list of tasks.
+     * @param counter The current number of tasks in the list.
+     * @return The index of the task in the list, or -1 if not found.
+     */
     public static int getTaskIndex(String toMark, ArrayList<Task> list, int counter) {
         int index = -1;
         if (Character.isDigit(toMark.charAt(0))) {
@@ -117,6 +186,14 @@ public class TaskList {
         return index;
     }
 
+    /**
+     * Adds a task to the task list and displays a confirmation message if required.
+     *
+     * @param task      The task to add.
+     * @param list      The list of tasks.
+     * @param counter   The current number of tasks in the list.
+     * @param isPrinted Whether to display a confirmation message.
+     */
     public static void addTask(Task task, ArrayList<Task> list, int counter, boolean isPrinted) {
         list.add(task);
         if (isPrinted) {
