@@ -17,6 +17,12 @@ import java.util.ArrayList;
 
 public class TaskList {
 
+    private static final int THREE_CHAR_WORD = 3;
+    private static final int FOUR_CHAR_WORD = 4;
+    private static final int FIVE_CHAR_WORD = 5;
+    private static final int SIX_CHAR_WORD = 6;
+    private static final int EIGHT_CHAR_WORD = 8;
+
     /**
      * Deletes a task from the task list based on the user input.
      *
@@ -26,7 +32,7 @@ public class TaskList {
      * @return The updated number of tasks in the list after deletion.
      */
     public static int delete(String line, ArrayList<Task> list, int counter) {
-        String toDelete = line.substring(6).trim();
+        String toDelete = line.substring(SIX_CHAR_WORD).trim();
         int index = getTaskIndex(toDelete, list, counter);
         counter--;
         UI.showTaskRemoved(list, counter, index);
@@ -49,12 +55,12 @@ public class TaskList {
         if (fromIndex == -1) {
             throw new InvalidEventException("Please use format: event [description] /from [start] /to [end]");
         }
-        String event = line.substring(5, fromIndex - 1).trim();
+        String event = line.substring(FIVE_CHAR_WORD, fromIndex - 1).trim();
         int toIndex = line.indexOf("/to");
         if (toIndex == -1) {
             throw new InvalidEventException("Please use format: event [description] /from [start] /to [end]");
         }
-        String from = line.substring(fromIndex + 5, toIndex - 1).trim();
+        String from = line.substring(fromIndex + FIVE_CHAR_WORD, toIndex - 1).trim();
         String to = line.substring(toIndex + 3).trim();
 
         if (event.isEmpty() || from.isEmpty() || to.isEmpty()) {
@@ -83,8 +89,8 @@ public class TaskList {
             throw new InvalidDeadlineException("Please use format: deadline [description] /by [when]");
         }
 
-        String deadline = line.substring(8, byIndex - 1).trim();
-        String by = line.substring(byIndex + 3).trim();
+        String deadline = line.substring(EIGHT_CHAR_WORD, byIndex - 1).trim();
+        String by = line.substring(byIndex + THREE_CHAR_WORD).trim();
 
         if (deadline.isEmpty() || by.isEmpty()) {
             throw new InvalidDeadlineException("Please use format: deadline [description] /by [when]");
@@ -105,10 +111,10 @@ public class TaskList {
      * @throws InvalidTodoException If the Todo description is empty.
      */
     public static int addTodo(String line, ArrayList<Task> list, int counter, boolean isPrinted) throws InvalidTodoException {
-        if (line.length() == 4) {
+        if (line.length() == FOUR_CHAR_WORD) {
             throw new InvalidTodoException("The description of Todo cannot be empty");
         }
-        addTask(new Todo(line.substring(5)), list, counter, isPrinted);
+        addTask(new Todo(line.substring(FIVE_CHAR_WORD)), list, counter, isPrinted);
         counter++;
         return counter;
     }
@@ -123,7 +129,7 @@ public class TaskList {
      * @throws InvalidInputException If the task to mark is invalid or not found.
      */
     public static void handleMark(String line, ArrayList<Task> list, int counter, boolean isPrinted) throws InvalidInputException {
-        if (line.length() == 4) {
+        if (line.length() == FOUR_CHAR_WORD) {
             throw new InvalidInputException("mark/unmark cannot be empty!");
         }
         String toMark = line.substring(line.indexOf(" ") + 1);
@@ -148,7 +154,7 @@ public class TaskList {
      * @throws InvalidInputException If the task to unmark is invalid or not found.
      */
     public static void handleUnmark(String line, ArrayList<Task> list, int counter) throws InvalidInputException {
-        if (line.length() == 4) {
+        if (line.length() == FOUR_CHAR_WORD) {
             throw new InvalidInputException("mark/unmark cannot be empty!");
         }
         String toMark = line.substring(line.indexOf(" ") + 1);
