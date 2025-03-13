@@ -1,1 +1,2 @@
-
+todo buy groceries
+event attend meeting /from 2025-03-15 10:00 /to 2025-03-15 12:00
