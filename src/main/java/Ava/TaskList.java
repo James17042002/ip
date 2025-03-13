@@ -228,9 +228,10 @@ public class TaskList {
         // Display a message if no tasks match the keyword
         if (matchingCounter == 0) {
             UI.showTaskNotFound(toFind);
+        } else {
+            // Display the list of matching tasks
+            UI.printTaskList(matchingList, matchingCounter);
         }
 
-        // Display the list of matching tasks
-        UI.printTaskList(matchingList, matchingCounter);
     }
 }

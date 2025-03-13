@@ -33,7 +33,7 @@ public class Storage {
      * @throws FileNotFoundException If the file is not found at the specified path.
      */
     public static void loadData(ArrayList<Task> list) throws FileNotFoundException {
-        File f = new File("src/main/java/Ava/Data/Ava.txt"); // Create a File for the given file path
+        File f = new File("Ava.txt"); // Create a File for the given file path
         Scanner s = new Scanner(f); // Create a Scanner using the File as the source
         readData(s, list);
     }
@@ -89,7 +89,7 @@ public class Storage {
      * @throws IOException If an I/O error occurs while writing to the file.
      */
     public static void saveData(ArrayList<Task> list) throws IOException {
-        FileWriter fw = new FileWriter("src/main/java/Ava/Data/Ava.txt");
+        FileWriter fw = new FileWriter("Ava.txt");
         for (Task task : list) {
             fw.write(task.toDataFormat() + "\n"); // Write each task in data format to the file
         }
